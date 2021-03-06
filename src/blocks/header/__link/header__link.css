@@ -1,0 +1,13 @@
+.header__link {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 22px;
+    /* identical to box height, or 122% */
+    text-decoration: none;
+    margin: 0;
+    width: max-content;
+    
+    color: #A9A9A9;
+    
+}

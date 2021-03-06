@@ -26,20 +26,17 @@ function App() {
     const [selectedCard, setSelectedCard] = React.useState({})
     const [cards, setCards] = React.useState([]);
     const [email, setEmail] = React.useState('');
-    const [userID, setUserID] = React.useState('');
     const [link, setLink] = React.useState('/sign-in');
     const [linkText, setLinkText] = React.useState('Войти');
     const [linkActive, setLinkActive] = React.useState(false);
 
     React.useEffect(() => {
-        console.log(localStorage.getItem('jwt'))
         if (localStorage.getItem('jwt')) {
             auth.checkToken(localStorage.getItem('jwt')).then((data) => {
                 setEmail(data.data.email);
                 api.getUserInfo()
                 .then((res) => {
                     setCurrentUser(res);
-                    setUserID(data._id);
                     handleLogin();
                     
                 })
@@ -54,11 +51,12 @@ function App() {
     }, [])
 
     React.useEffect(() => {
-        api.getInitialCards()
+            api.getInitialCards()
             .then((res) => {
                 setCards(res);
             })
             .catch(err => console.log(err))
+        
     }, [])
 
     function handleCardLike(card) {
@@ -159,28 +157,29 @@ function App() {
 
     return (
         <div className="page">
-            <Route>
-                {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
-            </Route>
+            
             <CurrentUserContext.Provider value={currentUser}>
 
             <Header link={link} linkText={linkText} email={email} linkActive={linkActive} />
             <Switch>
                 
-                <Route path="/sign-in">
+                <Route exact path="/sign-in">
                     <Login handleLogin={handleLogin} handleHeaderLink={handleHeaderLink} />
                 </Route>
 
-                <Route path="/sign-up">
+                <Route exact path="/sign-up">
                     <Register handleHeaderLink={handleHeaderLink} />
                 </Route>
                 
                 <ProtectedRoute exact path="/" loggedIn={loggedIn} component={Main} cards={cards} onDelete={handleCardDelete} onLike={handleCardLike}
                         onCardClick={handleCardClick} onEditProfile={handleEditProfileClick}
                         onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick}/>
+                <Footer />
                 
             </Switch>
-            <Footer />
+            <Route>
+                {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
+            </Route>
             <AddPlacePopup onAddPlace={handleAddPlace} isOpen={isAddPlacePopupOpen} onClickOverlay={handleOverlayClick} onClose={closeAllPopups} />
 
             <EditProfilePopup onUpdateUser={handleUpdateUser} isOpen={isEditProfilePopupOpen} onClickOverlay={handleOverlayClick} onClose={closeAllPopups} />
