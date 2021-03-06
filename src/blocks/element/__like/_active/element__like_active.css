@@ -1,0 +1,5 @@
+.element__like_active {
+    background: url(../../../../images/element__like_active.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+}

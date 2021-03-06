@@ -1,0 +1,17 @@
+.popup__input-error {
+  width: 100%;
+  margin: 0;
+  position: absolute;
+  left: 0;
+  top: calc(100% + 5px);
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 15px;
+  color: #ff0000;
+  z-index: 100;
+}
+
+.popup__input-error:first-of-type {
+  margin-bottom: 13px;
+}

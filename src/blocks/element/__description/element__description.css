@@ -1,0 +1,8 @@
+.element__description {
+  width: calc(100% - 36px);
+  display: grid;
+  grid-template-columns: 1fr 60px;
+  padding: 0;
+  margin: 25px auto 31px 21px;
+  align-items: center;
+}

@@ -1,0 +1,9 @@
+@media screen and (max-width: 767px) {
+  .popup__input_add-card:first-of-type {
+    margin: 36px auto 0;
+  }
+
+  .popup__input_add-card:last-of-type {
+    margin: 20px auto 0;
+  }
+}
