@@ -25,7 +25,6 @@ function App() {
     const [loggedIn, setLoggedIn] = React.useState(false)
     const [selectedCard, setSelectedCard] = React.useState({})
     const [cards, setCards] = React.useState([]);
-    const [email, setEmail] = React.useState('');
     const [link, setLink] = React.useState('/sign-in');
     const [linkText, setLinkText] = React.useState('Войти');
     const [linkActive, setLinkActive] = React.useState(false);
@@ -33,30 +32,30 @@ function App() {
     React.useEffect(() => {
         if (localStorage.getItem('jwt')) {
             auth.checkToken(localStorage.getItem('jwt')).then((data) => {
-                setEmail(data.data.email);
                 api.getUserInfo()
-                .then((res) => {
-                    setCurrentUser(res);
-                    handleLogin();
-                    
-                })
-                .catch(err => console.log(err))
+                    .then((res) => {
+                        res.email = data.data.email;
+                        setCurrentUser(res);
+                        handleLogin();
+
+                    })
+                    .catch(err => console.log(err))
             })
         }
-        
+
         else {
             setLoggedIn(false);
         }
-        
+
     }, [])
 
     React.useEffect(() => {
-            api.getInitialCards()
+        api.getInitialCards()
             .then((res) => {
                 setCards(res);
             })
             .catch(err => console.log(err))
-        
+
     }, [])
 
     function handleCardLike(card) {
@@ -97,6 +96,7 @@ function App() {
     }
 
     function handleOverlayClick(evt) {
+        console.log(151515);
         if (evt.target.classList.contains('popup_opened')) {
             closeAllPopups();
         }
@@ -149,7 +149,7 @@ function App() {
         setLinkActive(false);
 
     }
-    function handleLogin(){
+    function handleLogin() {
         setLoggedIn(true);
         setLinkText('Выйти');
         setLink('/logout')
@@ -157,37 +157,37 @@ function App() {
 
     return (
         <div className="page">
-            
+
             <CurrentUserContext.Provider value={currentUser}>
 
-            <Header link={link} linkText={linkText} email={email} linkActive={linkActive} />
-            <Switch>
-                
-                <Route exact path="/sign-in">
-                    <Login handleLogin={handleLogin} handleHeaderLink={handleHeaderLink} />
-                </Route>
+                <Header link={link} linkText={linkText} email={loggedIn ? currentUser.email : ''} linkActive={linkActive} />
+                <Switch>
 
-                <Route exact path="/sign-up">
-                    <Register handleHeaderLink={handleHeaderLink} />
-                </Route>
-                
-                <ProtectedRoute exact path="/" loggedIn={loggedIn} component={Main} cards={cards} onDelete={handleCardDelete} onLike={handleCardLike}
+                    <Route exact path="/sign-in">
+                        <Login handleLogin={handleLogin} handleHeaderLink={handleHeaderLink} />
+                    </Route>
+
+                    <Route exact path="/sign-up">
+                        <Register handleHeaderLink={handleHeaderLink} />
+                    </Route>
+
+                    <ProtectedRoute exact path="/" loggedIn={loggedIn} component={Main} cards={cards} onDelete={handleCardDelete} onLike={handleCardLike}
                         onCardClick={handleCardClick} onEditProfile={handleEditProfileClick}
-                        onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick}/>
-                <Footer />
-                
-            </Switch>
-            <Route>
-                {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
-            </Route>
-            <AddPlacePopup onAddPlace={handleAddPlace} isOpen={isAddPlacePopupOpen} onClickOverlay={handleOverlayClick} onClose={closeAllPopups} />
+                        onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} />
+                    <Footer />
 
-            <EditProfilePopup onUpdateUser={handleUpdateUser} isOpen={isEditProfilePopupOpen} onClickOverlay={handleOverlayClick} onClose={closeAllPopups} />
+                </Switch>
+                <Route>
+                    {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
+                </Route>
+                <AddPlacePopup onAddPlace={handleAddPlace} isOpen={isAddPlacePopupOpen} onClickOverlay={handleOverlayClick} onClose={closeAllPopups} />
 
-            <EditAvatarPopup onUpdateAvatar={handleUpdateAvatar} isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onClickOverlay={handleOverlayClick} />
+                <EditProfilePopup onUpdateUser={handleUpdateUser} isOpen={isEditProfilePopupOpen} onClickOverlay={handleOverlayClick} onClose={closeAllPopups} />
+
+                <EditAvatarPopup onUpdateAvatar={handleUpdateAvatar} isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onClickOverlay={handleOverlayClick} />
 
 
-            <ImagePopup onClickOverlay={handleOverlayClick} isOpen={isImagePopupOpen} card={selectedCard} onClose={closeAllPopups} />
+                <ImagePopup onClickOverlay={handleOverlayClick} isOpen={isImagePopupOpen} card={selectedCard} onClose={closeAllPopups} />
             </CurrentUserContext.Provider>
         </div >
     );

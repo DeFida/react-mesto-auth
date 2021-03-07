@@ -31,7 +31,8 @@ class Login extends React.Component {
     auth.authorize(this.state.email, this.state.password)
     .then((data) => {
       if (data.token) {
-        
+        localStorage.setItem('jwt', data.token);
+
         this.setState({email: '', password: ''}, () => {
           this.props.handleLogin()
           

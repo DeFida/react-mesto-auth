@@ -31,7 +31,7 @@ function Main(props) {
       </section>
 
       <section className="elements">
-        {props.cards.data.map((item) => <Card onCardClick={props.onCardClick} key={item._id} card={item} onCardLike={props.onLike} onDelete={props.onDelete} />)}
+        {props.cards.map((item) => <Card onCardClick={props.onCardClick} key={item._id} card={item} onCardLike={props.onLike} onDelete={props.onDelete} />)}
       </section>
     </main>
   );
