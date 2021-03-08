@@ -1,9 +1,8 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import * as auth from '../utils/auth.js';
 
 class Login extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       email: '',
@@ -14,36 +13,25 @@ class Login extends React.Component {
     this.props.handleHeaderLink('sign-up', 'Регистрация')
   }
 
-
-
   handleChange(e) {
-    const {name, value} = e.target;
+    const { name, value } = e.target;
     this.setState({
       [name]: value
     });
   }
-  handleSubmit(e){
+
+  handleSubmit(e) {
     e.preventDefault();
-    // здесь нужно будет добавить логин
-    if (!this.state.email || !this.state.password){
+    if (!this.state.email || !this.state.password) {
       return;
     }
-    auth.authorize(this.state.email, this.state.password)
-    .then((data) => {
-      if (data.token) {
-        localStorage.setItem('jwt', data.token);
-
-        this.setState({email: '', password: ''}, () => {
-          this.props.handleLogin()
-          
-          this.props.history.push('/')
-        })
-      }
-    })
-    .catch(err => console.log(err));
+    this.props.handleSubmitLogin(this.state.email, this.state.password);
+    this.setState({ email: '', password: '' })
+    this.props.history.push('/')
   }
-  render(){
-    return(
+
+  render() {
+    return (
       <form className="auth" onSubmit={this.handleSubmit}>
         <h2 className="auth__heading">Вход</h2>
 

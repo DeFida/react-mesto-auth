@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import * as auth from '../utils/auth.js';
 
 class Register extends React.Component {
   constructor(props) {
@@ -13,26 +12,23 @@ class Register extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.props.handleHeaderLink('sign-in', 'Войти')
   }
-  componentDidMount(){
+  componentDidMount() {
 
   }
   handleChange = (e) => {
-    const {name, value} = e.target;
+    const { name, value } = e.target;
     this.setState({
       [name]: value
     });
   }
 
   handleSubmit = (e) => {
-    e.preventDefault();
-    auth.register(this.state.email, this.state.password).then((res) => {
-        if(res.statusCode !== 400){
-            this.props.history.push('/sign-in');
-        }
-    })
+    e.preventDefault()
+    this.props.handleSubmitRegister(this.state.email, this.state.password)
+    this.props.history.push('/sign-in')
   }
-  render(){
-    return(
+  render() {
+    return (
       <form className="auth" onSubmit={this.handleSubmit}>
         <h2 className="auth__heading">Регистрация</h2>
 

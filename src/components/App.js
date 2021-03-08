@@ -37,12 +37,10 @@ function App() {
                         res.email = data.data.email;
                         setCurrentUser(res);
                         handleLogin();
-
                     })
                     .catch(err => console.log(err))
             })
         }
-
         else {
             setLoggedIn(false);
         }
@@ -57,6 +55,33 @@ function App() {
             .catch(err => console.log(err))
 
     }, [])
+
+    function handleSubmitLogin(email, password) {
+        console.log('duckduckgo')
+        auth.authorize(email, password)
+            .then((data) => {
+                if (data.token) {
+                    localStorage.setItem('jwt', data.token);
+                    console.log(localStorage.getItem('jwt'))
+                    handleLogin();
+                }
+            })
+            .catch(err => console.log(err));
+    }
+
+    function handleSubmitRegister(email, password) {
+        auth.register(email, password).then((res) => {
+            if (res.statusCode !== 400) {
+                console.log('You are successfully registered, and being redirected to Login page.')
+            }
+        }).catch((res) => { console.log(res) })
+    }
+
+    function handleLogin() {
+        setLoggedIn(true);
+        setLinkText('Выйти');
+        setLink('/logout')
+    }
 
     function handleCardLike(card) {
         // Снова проверяем, есть ли уже лайк на этой карточке
@@ -149,11 +174,6 @@ function App() {
         setLinkActive(false);
 
     }
-    function handleLogin() {
-        setLoggedIn(true);
-        setLinkText('Выйти');
-        setLink('/logout')
-    }
 
     return (
         <div className="page">
@@ -164,11 +184,11 @@ function App() {
                 <Switch>
 
                     <Route exact path="/sign-in">
-                        <Login handleLogin={handleLogin} handleHeaderLink={handleHeaderLink} />
+                        <Login handleLogin={handleLogin} handleHeaderLink={handleHeaderLink} handleSubmitLogin={handleSubmitLogin} />
                     </Route>
 
                     <Route exact path="/sign-up">
-                        <Register handleHeaderLink={handleHeaderLink} />
+                        <Register handleHeaderLink={handleHeaderLink} handleSubmitRegister={handleSubmitRegister} />
                     </Route>
 
                     <ProtectedRoute exact path="/" loggedIn={loggedIn} component={Main} cards={cards} onDelete={handleCardDelete} onLike={handleCardLike}
