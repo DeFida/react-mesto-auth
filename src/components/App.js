@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Switch, Redirect, useHistory } from 'react-router-dom';
 
 import Header from './Header.js'
 import Main from './Main.js'
@@ -29,6 +29,8 @@ function App() {
     const [linkText, setLinkText] = React.useState('Войти');
     const [linkActive, setLinkActive] = React.useState(false);
 
+    const history = useHistory();
+
     React.useEffect(() => {
         if (localStorage.getItem('jwt')) {
             auth.checkToken(localStorage.getItem('jwt')).then((data) => {
@@ -45,7 +47,7 @@ function App() {
             setLoggedIn(false);
         }
 
-    }, [])
+    }, [loggedIn])
 
     React.useEffect(() => {
         api.getInitialCards()
@@ -57,13 +59,13 @@ function App() {
     }, [])
 
     function handleSubmitLogin(email, password) {
-        console.log('duckduckgo')
         auth.authorize(email, password)
             .then((data) => {
                 if (data.token) {
                     localStorage.setItem('jwt', data.token);
-                    console.log(localStorage.getItem('jwt'))
+                    console.log(localStorage.getItem('jwt'));
                     handleLogin();
+                    history.push('/')
                 }
             })
             .catch(err => console.log(err));
@@ -80,7 +82,8 @@ function App() {
     function handleLogin() {
         setLoggedIn(true);
         setLinkText('Выйти');
-        setLink('/logout')
+        setLink('/logout');
+        setLinkActive(false);
     }
 
     function handleCardLike(card) {
@@ -171,8 +174,7 @@ function App() {
     function handleHeaderLink(link, linkText) {
         setLink(link);
         setLinkText(linkText);
-        setLinkActive(false);
-
+        setLinkActive(true);
     }
 
     return (
