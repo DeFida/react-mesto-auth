@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 
+import InfoToolTip from './InfoToolTip.js';
+
 class Register extends React.Component {
   constructor(props) {
     super(props);
@@ -30,6 +32,7 @@ class Register extends React.Component {
   render() {
     return (
       <form className="auth" onSubmit={this.handleSubmit}>
+        <InfoToolTip res={1}></InfoToolTip>
         <h2 className="auth__heading">Регистрация</h2>
 
         <input type="email" placeholder="Email" className="auth__input" name="email" id="email" onChange={this.handleChange} value={this.state.email} autoComplete="off" />

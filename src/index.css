@@ -57,3 +57,4 @@
 @import url(./blocks/auth/__heading/auth__heading.css);
 @import url(./blocks/auth/__input/auth__input.css);
 @import url(./blocks/auth/__under-text/auth__under-text.css);
+@import url(./blocks/popup/__tool-tip/popup__tool-tip.css);

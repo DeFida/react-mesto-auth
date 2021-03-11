@@ -34,36 +34,47 @@ function App() {
     React.useEffect(() => {
         if (localStorage.getItem('jwt')) {
             auth.checkToken(localStorage.getItem('jwt')).then((data) => {
-                api.getUserInfo()
-                    .then((res) => {
-                        res.email = data.data.email;
-                        setCurrentUser(res);
-                        handleLogin();
-                    })
-                    .catch(err => console.log(err))
+                const userWithEmail = currentUser;
+                userWithEmail.email = data.data.email
+                setCurrentUser(userWithEmail);
+                handleLogin();
             })
+                .catch(err => console.log(err))
         }
         else {
             setLoggedIn(false);
         }
 
+    }, [currentUser])
+
+    React.useEffect(() => {
+        if (loggedIn) {
+            api.getInitialCards()
+                .then((res) => {
+                    setCards(res);
+                })
+                .catch(err => console.log(err))
+        }
+
+
     }, [loggedIn])
 
     React.useEffect(() => {
-        api.getInitialCards()
-            .then((res) => {
-                setCards(res);
-            })
-            .catch(err => console.log(err))
-
-    }, [])
+        if (loggedIn) {
+            api.getUserInfo()
+                .then((res) => {
+                    setCurrentUser(res);
+                    handleLogin();
+                })
+                .catch(err => console.log(err))
+        }
+    }, [loggedIn])
 
     function handleSubmitLogin(email, password) {
         auth.authorize(email, password)
             .then((data) => {
                 if (data.token) {
                     localStorage.setItem('jwt', data.token);
-                    console.log(localStorage.getItem('jwt'));
                     handleLogin();
                     history.push('/')
                 }
@@ -96,7 +107,7 @@ function App() {
             const newCards = cards.map((c) => c._id === card._id ? newCard : c);
             // Обновляем стейт
             setCards(newCards);
-        });
+        }).catch(err => console.log(err));
     }
 
     function handleCardDelete(card) {
@@ -105,7 +116,7 @@ function App() {
                 return c._id !== card._id
             });
             setCards(newCards);
-        })
+        }).catch(err => console.log(err))
     }
 
     function handleCardClick(card) {
@@ -156,6 +167,7 @@ function App() {
             .then((res) => {
                 setCurrentUser(res);
             })
+            .catch(err => console.log(err))
     }
 
     function handleUpdateAvatar(params) {
@@ -163,6 +175,7 @@ function App() {
             .then((res) => {
                 setCurrentUser(res);
             })
+            .catch(err => console.log(err))
     }
 
     function handleAddPlace(params) {
@@ -170,6 +183,7 @@ function App() {
             .then((newCard) => {
                 setCards([newCard, ...cards])
             })
+            .catch(err => console.log(err))
     }
     function handleHeaderLink(link, linkText) {
         setLink(link);

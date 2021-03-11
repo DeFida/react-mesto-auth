@@ -1,0 +1,17 @@
+.popup__tool-tip {
+  position: relative;
+  padding: 60px 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: #ffffff;
+  border-radius: 10px;
+  opacity: 1;
+}
+
+@media screen and (max-width: 767px) {
+  .popup__tool-tip {
+    width: 282px;
+  }
+}
+/* loool */
