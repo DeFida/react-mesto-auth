@@ -9,7 +9,8 @@ class Login extends React.Component {
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.props.handleHeaderLink('sign-up', 'Регистрация')
+    this.props.handleHeaderLink('/sign-up', 'Регистрация')
+    // yes yes bro
   }
 
   handleChange(e) {
@@ -25,7 +26,7 @@ class Login extends React.Component {
       return;
     }
     this.props.handleSubmitLogin(this.state.email, this.state.password);
-    this.setState({ email: '', password: '' })
+    this.setState({ email: '', password: '' });
   }
 
   render() {

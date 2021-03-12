@@ -9,7 +9,8 @@ import Register from './Register'
 import AddPlacePopup from './AddPlacePopup'
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
-import ImagePopup from './ImagePopup.js'
+import ImagePopup from './ImagePopup.js';
+import InfoToolTip from './InfoToolTip.js';
 import ProtectedRoute from "./ProtectedRoute";
 
 import api from '../utils/api';
@@ -21,6 +22,8 @@ function App() {
     const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false)
     const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false)
     const [isImagePopupOpen, setIsImagePopupOpen] = React.useState(false)
+    const [isResponsePopupOpen, setIsResponsePopupOpen] = React.useState(false)
+    const [responseStatus, setResponseStatus] = React.useState(false)
     const [currentUser, setCurrentUser] = React.useState({})
     const [loggedIn, setLoggedIn] = React.useState(false)
     const [selectedCard, setSelectedCard] = React.useState({})
@@ -34,9 +37,8 @@ function App() {
     React.useEffect(() => {
         if (localStorage.getItem('jwt')) {
             auth.checkToken(localStorage.getItem('jwt')).then((data) => {
-                const userWithEmail = currentUser;
-                userWithEmail.email = data.data.email
-                setCurrentUser(userWithEmail);
+                currentUser.email = data.data.email
+                setCurrentUser(currentUser);
                 handleLogin();
             })
                 .catch(err => console.log(err))
@@ -48,46 +50,53 @@ function App() {
     }, [currentUser])
 
     React.useEffect(() => {
-        if (loggedIn) {
-            api.getInitialCards()
-                .then((res) => {
-                    setCards(res);
-                })
-                .catch(err => console.log(err))
-        }
-
-
-    }, [loggedIn])
+        api.getInitialCards()
+            .then((res) => {
+                setCards(res);
+            })
+            .catch(err => console.log(err))
+    }, [])
 
     React.useEffect(() => {
-        if (loggedIn) {
-            api.getUserInfo()
-                .then((res) => {
-                    setCurrentUser(res);
-                    handleLogin();
-                })
-                .catch(err => console.log(err))
-        }
-    }, [loggedIn])
+        api.getUserInfo()
+            .then((res) => {
+                setCurrentUser(res);
+                handleLogin();
+                setIsResponsePopupOpen(false);
+            })
+            .catch(err => console.log(err))
+    }, [])
 
     function handleSubmitLogin(email, password) {
         auth.authorize(email, password)
             .then((data) => {
                 if (data.token) {
+                    currentUser.email = email;
+                    setCurrentUser(currentUser);
                     localStorage.setItem('jwt', data.token);
                     handleLogin();
                     history.push('/')
                 }
             })
-            .catch(err => console.log(err));
+            .catch(err => {
+                console.log(err);
+                setIsResponsePopupOpen(true);
+                setResponseStatus(false);
+            });
     }
 
     function handleSubmitRegister(email, password) {
         auth.register(email, password).then((res) => {
             if (res.statusCode !== 400) {
+                setIsResponsePopupOpen(true);
+                setResponseStatus(true);
                 console.log('You are successfully registered, and being redirected to Login page.')
             }
-        }).catch((res) => { console.log(res) })
+        }).catch((res) => {
+            console.log(res);
+            setIsResponsePopupOpen(true);
+            setResponseStatus(false);
+        })
     }
 
     function handleLogin() {
@@ -95,6 +104,21 @@ function App() {
         setLinkText('Выйти');
         setLink('/logout');
         setLinkActive(false);
+    }
+
+    function handleHeaderBtn() {
+        if (loggedIn) {
+            localStorage.removeItem('jwt');
+            setLinkText('Регистрация')
+            setLoggedIn(false);
+            // history.push("/sign-in");
+        }
+        else if (link === '/sign-in') {
+            history.push("/sign-in");
+        }
+        else {
+            history.push("/sign-up");
+        }
     }
 
     function handleCardLike(card) {
@@ -130,12 +154,12 @@ function App() {
         setIsAddPlacePopupOpen(false);
         setIsEditAvatarPopupOpen(false);
         setIsImagePopupOpen(false);
+        setIsResponsePopupOpen(false)
         setSelectedCard({});
         document.removeEventListener('keydown', handleEscClose);
     }
 
     function handleOverlayClick(evt) {
-        console.log(151515);
         if (evt.target.classList.contains('popup_opened')) {
             closeAllPopups();
         }
@@ -165,6 +189,7 @@ function App() {
     function handleUpdateUser(params) {
         api.setProfile(params.name, params.about)
             .then((res) => {
+                res.email = currentUser.email;
                 setCurrentUser(res);
             })
             .catch(err => console.log(err))
@@ -173,6 +198,7 @@ function App() {
     function handleUpdateAvatar(params) {
         api.setAvatar(params.avatar)
             .then((res) => {
+                res.email = currentUser.email;
                 setCurrentUser(res);
             })
             .catch(err => console.log(err))
@@ -196,7 +222,7 @@ function App() {
 
             <CurrentUserContext.Provider value={currentUser}>
 
-                <Header link={link} linkText={linkText} email={loggedIn ? currentUser.email : ''} linkActive={linkActive} />
+                <Header onClick={handleHeaderBtn} link={link} linkText={linkText} email={loggedIn ? currentUser.email : ''} linkActive={linkActive} />
                 <Switch>
 
                     <Route exact path="/sign-in">
@@ -222,8 +248,10 @@ function App() {
 
                 <EditAvatarPopup onUpdateAvatar={handleUpdateAvatar} isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onClickOverlay={handleOverlayClick} />
 
-
                 <ImagePopup onClickOverlay={handleOverlayClick} isOpen={isImagePopupOpen} card={selectedCard} onClose={closeAllPopups} />
+
+                <InfoToolTip res={responseStatus} onClickOverlay={handleOverlayClick} isOpen={isResponsePopupOpen} onClose={closeAllPopups}></InfoToolTip>
+
             </CurrentUserContext.Provider>
         </div >
     );
