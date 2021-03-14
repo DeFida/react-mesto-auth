@@ -25,6 +25,7 @@ function App() {
     const [isResponsePopupOpen, setIsResponsePopupOpen] = React.useState(false)
     const [responseStatus, setResponseStatus] = React.useState(false)
     const [currentUser, setCurrentUser] = React.useState({})
+    const [email, setEmail] = React.useState({})
     const [loggedIn, setLoggedIn] = React.useState(false)
     const [selectedCard, setSelectedCard] = React.useState({})
     const [cards, setCards] = React.useState([]);
@@ -37,8 +38,7 @@ function App() {
     React.useEffect(() => {
         if (localStorage.getItem('jwt')) {
             auth.checkToken(localStorage.getItem('jwt')).then((data) => {
-                currentUser.email = data.data.email
-                setCurrentUser(currentUser);
+                setEmail(data.data.email);
                 handleLogin();
             })
                 .catch(err => console.log(err))
@@ -47,7 +47,7 @@ function App() {
             setLoggedIn(false);
         }
 
-    }, [currentUser])
+    }, [email])
 
     React.useEffect(() => {
         api.getInitialCards()
@@ -71,8 +71,7 @@ function App() {
         auth.authorize(email, password)
             .then((data) => {
                 if (data.token) {
-                    currentUser.email = email;
-                    setCurrentUser(currentUser);
+                    setEmail(email);
                     localStorage.setItem('jwt', data.token);
                     handleLogin();
                     history.push('/')
@@ -90,6 +89,7 @@ function App() {
             if (res.statusCode !== 400) {
                 setIsResponsePopupOpen(true);
                 setResponseStatus(true);
+                history.push('/sign-in')
                 console.log('You are successfully registered, and being redirected to Login page.')
             }
         }).catch((res) => {
@@ -189,7 +189,6 @@ function App() {
     function handleUpdateUser(params) {
         api.setProfile(params.name, params.about)
             .then((res) => {
-                res.email = currentUser.email;
                 setCurrentUser(res);
             })
             .catch(err => console.log(err))
@@ -222,7 +221,7 @@ function App() {
 
             <CurrentUserContext.Provider value={currentUser}>
 
-                <Header onClick={handleHeaderBtn} link={link} linkText={linkText} email={loggedIn ? currentUser.email : ''} linkActive={linkActive} />
+                <Header onClick={handleHeaderBtn} link={link} linkText={linkText} email={loggedIn ? email : ''} linkActive={linkActive} />
                 <Switch>
 
                     <Route exact path="/sign-in">
