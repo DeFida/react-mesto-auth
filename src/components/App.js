@@ -25,7 +25,7 @@ function App() {
     const [isResponsePopupOpen, setIsResponsePopupOpen] = React.useState(false)
     const [responseStatus, setResponseStatus] = React.useState(false)
     const [currentUser, setCurrentUser] = React.useState({})
-    const [email, setEmail] = React.useState({})
+    const [email, setEmail] = React.useState('')
     const [loggedIn, setLoggedIn] = React.useState(false)
     const [selectedCard, setSelectedCard] = React.useState({})
     const [cards, setCards] = React.useState([]);
