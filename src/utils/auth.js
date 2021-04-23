@@ -1,8 +1,8 @@
-export const BASE_URL = 'https://auth.nomoreparties.co';
+export const BASE_URL = 'http://127.0.0.1:3000';
 
 const handleOriginalResponse = (res) => {
   if (!res.ok) {
-      return Promise.reject(`Error: ${res.status}`);
+    return Promise.reject(`Error: ${res.status}`);
   }
   return res.json();
 }
@@ -11,23 +11,24 @@ export const register = (email, password) => {
   return fetch(`${BASE_URL}/signup`, {
     method: 'POST',
     headers: {
-        "Content-Type": "application/json"
+      "Content-Type": "application/json"
     },
-    body: JSON.stringify({password, email})
+    body: JSON.stringify({ password, email })
   })
-  .then(handleOriginalResponse);
+    .then(handleOriginalResponse);
 };
 export const authorize = (email, password) => {
   return fetch(`${BASE_URL}/signin`, {
     method: 'POST',
     headers: {
-        "Content-Type": "application/json"
+      "Content-Type": "application/json"
     },
-    body: JSON.stringify({email, password})
+    body: JSON.stringify({ email, password })
   })
-  .then(handleOriginalResponse);
+    .then(handleOriginalResponse);
 };
 export const checkToken = (token) => {
+  console.log(token);
   return fetch(`${BASE_URL}/users/me`, {
     method: 'GET',
     headers: {
@@ -35,5 +36,5 @@ export const checkToken = (token) => {
       'Authorization': `Bearer ${token}`,
     }
   })
-  .then(handleOriginalResponse);
+    .then(handleOriginalResponse);
 }

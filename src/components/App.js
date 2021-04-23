@@ -72,6 +72,7 @@ function App() {
             .then((data) => {
                 if (data.token) {
                     setEmail(email);
+                    console.log(data.token);
                     localStorage.setItem('jwt', data.token);
                     handleLogin();
                     history.push('/')
@@ -225,7 +226,7 @@ function App() {
                 <Switch>
 
                     <Route exact path="/sign-in">
-                        <Login handleLogin={handleLogin} handleHeaderLink={handleHeaderLink} handleSubmitLogin={handleSubmitLogin} />
+                        <Login handleHeaderLink={handleHeaderLink} handleSubmitLogin={handleSubmitLogin} />
                     </Route>
 
                     <Route exact path="/sign-up">
