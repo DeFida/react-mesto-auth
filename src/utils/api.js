@@ -18,7 +18,7 @@ class Api {
     }
 
     changeLikeCardStatus(id, status) {
-        return fetch(this.baseUrl + `/cards/likes/${id}`, {
+        return fetch(this.baseUrl + `/cards/${id}/likes`, {
             headers: this.headers,
             method: `${status ? 'PUT' : 'DELETE'}`,
         }).then(this._handleOriginalResponse);
@@ -72,12 +72,11 @@ class Api {
 }
 
 const api = new Api({
-    baseUrl: 'http://localhost:3000',
+    baseUrl: 'http://localhost:3001',
     headers: {
-        // authorization: '8b08d836-44f0-4512-90c9-f96fba78716b',
+        'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
         'Content-Type': 'application/json'
-    },
-    credentials: 'same-origin'
+    }
 });
 
 export default api;

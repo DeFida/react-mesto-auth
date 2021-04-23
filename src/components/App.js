@@ -38,7 +38,8 @@ function App() {
     React.useEffect(() => {
         if (localStorage.getItem('jwt')) {
             auth.checkToken(localStorage.getItem('jwt')).then((data) => {
-                setEmail(data.data.email);
+                setCurrentUser(data);
+                setEmail(data.email);
                 handleLogin();
             })
                 .catch(err => console.log(err))
@@ -72,7 +73,6 @@ function App() {
             .then((data) => {
                 if (data.token) {
                     setEmail(email);
-                    console.log(data.token);
                     localStorage.setItem('jwt', data.token);
                     handleLogin();
                     history.push('/')
@@ -124,12 +124,12 @@ function App() {
 
     function handleCardLike(card) {
         // Снова проверяем, есть ли уже лайк на этой карточке
-        const isLiked = card.likes.some(i => i._id === currentUser._id);
+        const isLiked = card.likes.some(i => i === currentUser._id);
 
         // Отправляем запрос в API и получаем обновлённые данные карточки
         api.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
-            // Формируем новый массив на основе имеющегося, подставляя в него новую карточку
-            const newCards = cards.map((c) => c._id === card._id ? newCard : c);
+            console.log(newCard.message)
+            const newCards = cards.map((c) => c._id === card._id ? newCard.message : c);
             // Обновляем стейт
             setCards(newCards);
         }).catch(err => console.log(err));
@@ -188,8 +188,10 @@ function App() {
     }
 
     function handleUpdateUser(params) {
+        console.log(params)
         api.setProfile(params.name, params.about)
             .then((res) => {
+                
                 setCurrentUser(res);
             })
             .catch(err => console.log(err))
@@ -198,6 +200,7 @@ function App() {
     function handleUpdateAvatar(params) {
         api.setAvatar(params.avatar)
             .then((res) => {
+                
                 res.email = currentUser.email;
                 setCurrentUser(res);
             })
@@ -207,7 +210,8 @@ function App() {
     function handleAddPlace(params) {
         api.createCard(params.name, params.link)
             .then((newCard) => {
-                setCards([newCard, ...cards])
+                console.log(newCard);
+                setCards([newCard.data, ...cards])
             })
             .catch(err => console.log(err))
     }

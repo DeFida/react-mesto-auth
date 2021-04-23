@@ -1,4 +1,4 @@
-export const BASE_URL = 'http://127.0.0.1:3000';
+export const BASE_URL = 'http://127.0.0.1:3001';
 
 const handleOriginalResponse = (res) => {
   if (!res.ok) {
@@ -28,7 +28,6 @@ export const authorize = (email, password) => {
     .then(handleOriginalResponse);
 };
 export const checkToken = (token) => {
-  console.log(token);
   return fetch(`${BASE_URL}/users/me`, {
     method: 'GET',
     headers: {
