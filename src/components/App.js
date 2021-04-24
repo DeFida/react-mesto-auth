@@ -53,7 +53,7 @@ function App() {
     React.useEffect(() => {
         api.getInitialCards()
             .then((res) => {
-                setCards(res);
+                setCards(res.reverse());
             })
             .catch(err => console.log(err))
     }, [])
@@ -74,6 +74,7 @@ function App() {
                 if (data.token) {
                     setEmail(email);
                     localStorage.setItem('jwt', data.token);
+                    
                     handleLogin();
                     history.push('/')
                 }
